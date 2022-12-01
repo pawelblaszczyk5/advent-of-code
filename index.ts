@@ -12,6 +12,8 @@ const elvesCaloriesSummedSorted = [...elvesCaloriesSummed].sort((a, b) => b - a)
 
 const maximumCaloriesCarriedBySingleElf = elvesCaloriesSummedSorted[0];
 
+console.log(maximumCaloriesCarriedBySingleElf);
+
 const top3ElvesWithMostCalories = elvesCaloriesSummedSorted.slice(0, 3);
 
 const sumOfTop3ElvesCalories = top3ElvesWithMostCalories.reduce((prev, curr) => prev + curr, 0);

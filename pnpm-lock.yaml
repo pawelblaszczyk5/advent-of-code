@@ -6,6 +6,7 @@ specifiers:
   '@types/node': ^18.11.10
   cuid: ^2.1.8
   esbuild: ^0.15.16
+  prettier: ^2.8.0
   typescript: ^4.9.3
 
 devDependencies:
@@ -14,6 +15,7 @@ devDependencies:
   '@types/node': 18.11.10
   cuid: 2.1.8
   esbuild: 0.15.16
+  prettier: 2.8.0
   typescript: 4.9.3
 
 packages:
@@ -579,6 +581,12 @@ packages:
   /picomatch/2.3.1:
     resolution: {integrity: sha512-JU3teHTNjmE2VCGFzuY8EXzCDVwEqB2a8fsIvwaStHhAWJEeVd1o1QD80CU6+ZdEXXSLbSsuLwJjkCBWqRQUVA==}
     engines: {node: '>=8.6'}
+    dev: true
+
+  /prettier/2.8.0:
+    resolution: {integrity: sha512-9Lmg8hTFZKG0Asr/kW9Bp8tJjRVluO8EJQVfY2T7FMw9T5jy4I/Uvx0Rca/XWf50QQ1/SS48+6IJWnrb+2yemA==}
+    engines: {node: '>=10.13.0'}
+    hasBin: true
     dev: true
 
   /readdirp/3.6.0:

@@ -2,6 +2,7 @@
   "name": "advent-of-code",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "scripts": {
     "start": "esrun index.ts"
   },
@@ -14,6 +15,7 @@
     "@types/node": "^18.11.10",
     "cuid": "^2.1.8",
     "esbuild": "^0.15.16",
+    "prettier": "^2.8.0",
     "typescript": "^4.9.3"
   }
 }

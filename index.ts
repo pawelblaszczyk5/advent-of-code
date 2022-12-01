@@ -8,6 +8,12 @@ const elvesCalories = fileContent
 
 const elvesCaloriesSummed = elvesCalories.map(elfCalories => elfCalories.reduce((prev, curr) => prev + curr, 0));
 
-const maximumCaloriesCarriedBySingleElf = Math.max(...elvesCaloriesSummed);
+const elvesCaloriesSummedSorted = [...elvesCaloriesSummed].sort((a, b) => b - a);
 
-console.log(maximumCaloriesCarriedBySingleElf);
+const maximumCaloriesCarriedBySingleElf = elvesCaloriesSummedSorted[0];
+
+const top3ElvesWithMostCalories = elvesCaloriesSummedSorted.slice(0, 3);
+
+const sumOfTop3ElvesCalories = top3ElvesWithMostCalories.reduce((prev, curr) => prev + curr, 0);
+
+console.log(sumOfTop3ElvesCalories);

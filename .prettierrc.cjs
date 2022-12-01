@@ -1,4 +1,3 @@
-// eslint-disable-next-line no-undef
 module.exports = {
 	printWidth: 120,
 	tabWidth: 2,
@@ -10,5 +9,4 @@ module.exports = {
 	arrowParens: 'avoid',
 	singleAttributePerLine: false,
 	vueIndentScriptAndStyle: true,
-	plugins: [require('prettier-plugin-tailwindcss')],
 };

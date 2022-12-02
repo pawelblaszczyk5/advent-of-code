@@ -1,4 +1,4 @@
-{ 
+{
   "$schema": "https://deno.land/x/deno/cli/schemas/config-file.v1.json",
   "compilerOptions": {
     "strict": true,
@@ -13,9 +13,14 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "importsNotUsedAsValues": "error",
-    "checkJs": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "checkJs": true
+  },
+  "fmt": {
+    "options": {
+      "useTabs": true,
+      "indentWidth": 2,
+      "singleQuote": true,
+      "lineWidth": 100
+    }
   }
 }

@@ -16,14 +16,6 @@ const MY_MOVE = {
 
 type MyMove = typeof MY_MOVE[keyof typeof MY_MOVE];
 
-const EXPECTED_RESULT = {
-	LOSE: 'X',
-	DRAW: 'Y',
-	WIN: 'Z',
-} as const;
-
-type ExpectedResult = typeof EXPECTED_RESULT[keyof typeof EXPECTED_RESULT];
-
 const BASE_SCORE = {
 	LOSE: 0,
 	DRAW: 3,
@@ -38,13 +30,9 @@ const BONUS_SCORE = {
 
 type StrategyGuideEntry = [OponentMove, MyMove];
 
-type UpdatedStrategyGuideEntry = [OponentMove, ExpectedResult];
-
 const strategyGuide = fileContent
 	.split('\n')
 	.map((roundStrategy) => roundStrategy.split(' ')) as Array<StrategyGuideEntry>;
-
-const updatedStrategyGuide = strategyGuide as Array<UpdatedStrategyGuideEntry>;
 
 const getBaseScore = ([oponentMove, myMove]: StrategyGuideEntry) => {
 	if (oponentMove === OPONENT_MOVE.ROCK && myMove === MY_MOVE.ROCK) return BASE_SCORE.DRAW;
@@ -72,6 +60,20 @@ const resultByStrategyGuide = strategyGuide.reduce<number>(
 );
 
 console.log(resultByStrategyGuide);
+
+// Part two
+
+const EXPECTED_RESULT = {
+	LOSE: 'X',
+	DRAW: 'Y',
+	WIN: 'Z',
+} as const;
+
+type ExpectedResult = typeof EXPECTED_RESULT[keyof typeof EXPECTED_RESULT];
+
+type UpdatedStrategyGuideEntry = [OponentMove, ExpectedResult];
+
+const updatedStrategyGuide = strategyGuide as Array<UpdatedStrategyGuideEntry>;
 
 const getMyMoveFromUpdatedStrategyGuide = (
 	[oponentMove, expectedResult]: UpdatedStrategyGuideEntry,

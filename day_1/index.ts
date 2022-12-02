@@ -1,4 +1,4 @@
-const fileContent = await Deno.readTextFile('./input.txt');
+const fileContent = await Deno.readTextFile(`${Deno.cwd()}/day_1/input.txt`);
 
 const elvesCalories = fileContent
 	.split('\n\n')

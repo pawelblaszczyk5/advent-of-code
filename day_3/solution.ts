@@ -1,20 +1,20 @@
 const fileContent = await Deno.readTextFile(`${Deno.cwd()}/day_3/input.txt`);
 
-const rucksacks = fileContent.split('\n').map((
-	rucksacksCombined,
+const rucksacksCompartments = fileContent.split('\n').map((
+	rucksack,
 ) =>
 	[
-		rucksacksCombined.slice(0, rucksacksCombined.length / 2),
-		rucksacksCombined.slice(-rucksacksCombined.length / 2),
+		rucksack.slice(0, rucksack.length / 2),
+		rucksack.slice(-rucksack.length / 2),
 	] as const
 );
 
-const duplicatedItems = rucksacks.map(([firstRucksack, secondRucksack]) => {
-	const firstRucksackWithoutDuplicates: Array<string> = Array.from(new Set(firstRucksack));
-	const secondRucksackWithoutDuplicates: Array<string> = Array.from(new Set(secondRucksack));
+const duplicatedItems = rucksacksCompartments.map(([firstCompartment, secondCompartment]) => {
+	const firstCompartmentWithoutDuplicates: Array<string> = Array.from(new Set(firstCompartment));
+	const secondCompartmentWithoutDuplicates: Array<string> = Array.from(new Set(secondCompartment));
 
-	return firstRucksackWithoutDuplicates.filter((item) =>
-		secondRucksackWithoutDuplicates.includes(item)
+	return firstCompartmentWithoutDuplicates.filter((item) =>
+		secondCompartmentWithoutDuplicates.includes(item)
 	);
 }).flat();
 
@@ -38,3 +38,5 @@ const duplicatedItemsPrioritiesSum = duplicatedItems.reduce(
 );
 
 console.log(duplicatedItemsPrioritiesSum);
+
+// Part two

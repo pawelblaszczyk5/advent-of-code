@@ -12,11 +12,11 @@ const rucksacksCompartments = allRuckascks.map((
 );
 
 const duplicatedItems = rucksacksCompartments.map(([firstCompartment, secondCompartment]) => {
-	const firstCompartmentWithoutDuplicates: Array<string> = Array.from(new Set(firstCompartment));
-	const secondCompartmentWithoutDuplicates: Array<string> = Array.from(new Set(secondCompartment));
+	const firstCompartmentWithoutDuplicates = Array.from(new Set(firstCompartment));
+	const secondCompartmentWithoutDuplicates = new Set(secondCompartment);
 
 	return firstCompartmentWithoutDuplicates.filter((item) =>
-		secondCompartmentWithoutDuplicates.includes(item)
+		secondCompartmentWithoutDuplicates.has(item)
 	);
 }).flat();
 

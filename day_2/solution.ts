@@ -54,7 +54,7 @@ const getResult = ([oponentMove, myMove]: StrategyGuideEntry) => {
 	return getBaseScore([oponentMove, myMove]) + BONUS_SCORE[myMove];
 };
 
-const resultByStrategyGuide = strategyGuide.reduce<number>(
+const resultByStrategyGuide = strategyGuide.reduce(
 	(currentScore, strategyGuideEntry) => getResult(strategyGuideEntry) + currentScore,
 	0,
 );
@@ -111,7 +111,7 @@ const getMyMoveFromUpdatedStrategyGuide = (
 	throw new Error('All cases should be covered');
 };
 
-const resultByUpdatedStrategyGuide = updatedStrategyGuide.reduce<number>(
+const resultByUpdatedStrategyGuide = updatedStrategyGuide.reduce(
 	(currentResult, updatedStrategyGuideEntry) =>
 		getResult([
 			updatedStrategyGuideEntry[0],

@@ -48,8 +48,11 @@ const rucksacksDividedIntoGroups = Array.from(
 	(_, index) => allRuckascks.slice(index * 3, index * 3 + 3) as [string, string, string],
 );
 
+const UNEXPECTED_MISSING_GROUP_BADGE = '&';
+
 const groupsBadges = rucksacksDividedIntoGroups.map(([firstElv, secondElv, thirdElv]) =>
-	Array.from(firstElv).find((item) => secondElv.includes(item) && thirdElv.includes(item))!
+	Array.from(firstElv).find((item) => secondElv.includes(item) && thirdElv.includes(item)) ??
+		UNEXPECTED_MISSING_GROUP_BADGE
 );
 
 const groupsBadgesPrioritiesSum = groupsBadges.reduce(

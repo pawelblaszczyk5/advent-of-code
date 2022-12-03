@@ -1,6 +1,8 @@
 const fileContent = await Deno.readTextFile(`${Deno.cwd()}/day_3/input.txt`);
 
-const rucksacksCompartments = fileContent.split('\n').map((
+const allRuckascks = fileContent.split('\n');
+
+const rucksacksCompartments = allRuckascks.map((
 	rucksack,
 ) =>
 	[
@@ -33,10 +35,26 @@ const getItemPriority = (item: string) => {
 };
 
 const duplicatedItemsPrioritiesSum = duplicatedItems.reduce(
-	(currentSum, currentItem) => currentSum + getItemPriority(currentItem),
+	(currentSum, item) => currentSum + getItemPriority(item),
 	0,
 );
 
 console.log(duplicatedItemsPrioritiesSum);
 
 // Part two
+
+const rucksacksDividedIntoGroups = Array.from(
+	{ length: allRuckascks.length / 3 },
+	(_, index) => allRuckascks.slice(index * 3, index * 3 + 3) as [string, string, string],
+);
+
+const groupsBadges = rucksacksDividedIntoGroups.map(([firstElv, secondElv, thirdElv]) =>
+	Array.from(firstElv).find((item) => secondElv.includes(item) && thirdElv.includes(item))!
+);
+
+const groupsBadgesPrioritiesSum = groupsBadges.reduce(
+	(currentSum, item) => currentSum + getItemPriority(item),
+	0,
+);
+
+console.log(groupsBadgesPrioritiesSum);

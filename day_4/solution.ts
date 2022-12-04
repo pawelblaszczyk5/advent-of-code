@@ -27,13 +27,10 @@ console.log(overlappingAssignments.length);
 const overlappingSections = pairAssignments.filter((
 	[firstAssignment, secondAssignment],
 ) =>
-	(firstAssignment.start >= secondAssignment.start &&
-		firstAssignment.start <= secondAssignment.end) ||
-	(firstAssignment.end <= secondAssignment.end &&
+	(firstAssignment.start <= secondAssignment.end &&
 		firstAssignment.end >= secondAssignment.start) ||
-	(secondAssignment.start >= firstAssignment.start &&
-		secondAssignment.start <= firstAssignment.end) ||
-	(secondAssignment.end <= firstAssignment.end && secondAssignment.end >= firstAssignment.start)
+	(secondAssignment.start <= firstAssignment.end &&
+		secondAssignment.end >= firstAssignment.start)
 );
 
 console.log(overlappingSections.length);

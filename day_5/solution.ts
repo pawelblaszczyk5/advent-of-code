@@ -23,3 +23,14 @@ const stacks = rawStacks.split('\n').slice(0, -1).reduce<Stacks>(
 	},
 	[[], [], []] as Stacks,
 ).map((stack) => stack.reverse());
+
+const instructionRegEx = /move (\d+) from (\d+) to (\d+)/;
+const instructions = rawInstructions.split('\n').map((instruction) => {
+	const result = instruction.match(instructionRegEx);
+
+	if (!result) throw new Error('Incorrect data');
+
+	const [, count, source, destination] = result;
+
+	return { count: Number(count), source: Number(source), destination: Number(destination) };
+});

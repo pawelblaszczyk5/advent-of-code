@@ -23,8 +23,6 @@ const stacks = rawStacks.split('\n').slice(0, -1).reduce<Array<Array<string>>>(
 	[],
 ).map((stack) => stack.reverse());
 
-console.log(stacks);
-
 const instructionRegEx = /move (\d+) from (\d+) to (\d+)/;
 const instructions = rawInstructions.split('\n').map((instruction) => {
 	const result = instruction.match(instructionRegEx);
@@ -42,7 +40,9 @@ instructions.forEach(({ source, destination, count }) => {
 
 	if (!destinationStack || !sourceStack) throw new Error('Incorrect data');
 
-	Array.from({ length: count }).forEach(() => destinationStack.push(sourceStack.pop()!));
+	const itemsToMove = sourceStack.splice(sourceStack.length - count, count);
+
+	destinationStack.push(...itemsToMove);
 });
 
 const message = stacks.map((stack) => stack.at(-1)).join('');

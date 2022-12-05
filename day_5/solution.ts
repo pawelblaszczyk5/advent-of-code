@@ -4,25 +4,26 @@ const [rawStacks, rawInstructions] = fileContent.split('\n\n') as [string, strin
 
 const BEGIN_INDEX = 1;
 const OFFSET = 4;
-const STACKS_COUNT = 3;
+const STACKS_COUNT = 9;
 
-type Stack = Array<string>;
-type Stacks = [Stack, Stack, Stack];
-
-const stacks = rawStacks.split('\n').slice(0, -1).reduce<Stacks>(
+const stacks = rawStacks.split('\n').slice(0, -1).reduce<Array<Array<string>>>(
 	(stacks, currentRecord) => {
 		Array.from({ length: STACKS_COUNT }).forEach((_, index) => {
 			const possibleElement = currentRecord[index * OFFSET + BEGIN_INDEX];
 
 			if (possibleElement === ' ' || !possibleElement) return;
 
-			stacks[index]?.push(possibleElement);
+			stacks[index] ??= [];
+
+			stacks[index]!.push(possibleElement);
 		});
 
 		return stacks;
 	},
-	[[], [], []] as Stacks,
+	[],
 ).map((stack) => stack.reverse());
+
+console.log(stacks);
 
 const instructionRegEx = /move (\d+) from (\d+) to (\d+)/;
 const instructions = rawInstructions.split('\n').map((instruction) => {
@@ -32,5 +33,18 @@ const instructions = rawInstructions.split('\n').map((instruction) => {
 
 	const [, count, source, destination] = result;
 
-	return { count: Number(count), source: Number(source), destination: Number(destination) };
+	return { count: Number(count), source: Number(source) - 1, destination: Number(destination) - 1 };
 });
+
+instructions.forEach(({ source, destination, count }) => {
+	const sourceStack = stacks[source];
+	const destinationStack = stacks[destination];
+
+	if (!destinationStack || !sourceStack) throw new Error('Incorrect data');
+
+	Array.from({ length: count }).forEach(() => destinationStack.push(sourceStack.pop()!));
+});
+
+const message = stacks.map((stack) => stack.at(-1)).join('');
+
+console.log(message);

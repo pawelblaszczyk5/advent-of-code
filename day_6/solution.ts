@@ -1,6 +1,6 @@
 const dataStreamBuffer = await Deno.readTextFile(`${Deno.cwd()}/day_6/input.txt`);
 
-const MARKER_LENGTH = 4;
+const MARKER_LENGTH = 14;
 
 const markerEndPosition =
 	Array.from(dataStreamBuffer).findIndex((_, index) =>

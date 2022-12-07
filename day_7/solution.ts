@@ -163,3 +163,4 @@ if (!directoriesCanRemove[0]) throw new Error('Can\'t find proper directory to r
 const [bestDirectoryToRemove, sizeOfBestDirectoryToRemove] = directoriesCanRemove[0];
 
 console.log(sizeOfBestDirectoryToRemove);
+console.log(bestDirectoryToRemove);

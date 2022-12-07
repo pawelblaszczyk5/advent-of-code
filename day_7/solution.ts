@@ -140,11 +140,11 @@ const allDirectoriesWithSizes = allDirectories.map(
 
 const SMALL_DIRECTORY_THRESHOLD = 100000;
 
-const smallDirectoriesSizeSum = allDirectoriesWithSizes.filter(([, size]) =>
+const smallDirectoriesSize = allDirectoriesWithSizes.filter(([, size]) =>
 	size <= SMALL_DIRECTORY_THRESHOLD
 ).reduce((result, [, size]) => result + size, 0);
 
-console.log(smallDirectoriesSizeSum);
+console.log(smallDirectoriesSize);
 
 // Part two
 
@@ -154,13 +154,13 @@ const MAXIMUM_ROOT_DIRECTORY_SIZE = TOTAL_DISK_SPACE_AVAILABLE - SPACE_REQUIRED_
 
 const sizeExceededBy = getDirectorySize(rootDirectory) - MAXIMUM_ROOT_DIRECTORY_SIZE;
 
-const directoriesCanRemove = allDirectoriesWithSizes.filter((
+const directoriesSufficientToRemove = allDirectoriesWithSizes.filter((
 	[, size],
 ) => size >= sizeExceededBy).sort(([, firstSize], [, secondSize]) => firstSize - secondSize);
 
-if (!directoriesCanRemove[0]) throw new Error('Can\'t find proper directory to remove');
+if (!directoriesSufficientToRemove[0]) throw new Error('Can\'t find proper directory to remove');
 
-const [bestDirectoryToRemove, sizeOfBestDirectoryToRemove] = directoriesCanRemove[0];
+const [directory, sizeOfDirectory] = directoriesSufficientToRemove[0];
 
-console.log(sizeOfBestDirectoryToRemove);
-console.log(bestDirectoryToRemove);
+console.log(sizeOfDirectory);
+console.log(directory);

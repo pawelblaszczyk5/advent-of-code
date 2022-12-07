@@ -145,3 +145,21 @@ const smallDirectoriesSizeSum = allDirectoriesWithSizes.filter(([, size]) =>
 ).reduce((result, [, size]) => result + size, 0);
 
 console.log(smallDirectoriesSizeSum);
+
+// Part two
+
+const TOTAL_DISK_SPACE_AVAILABLE = 70000000;
+const SPACE_REQUIRED_FOR_UPDATE = 30000000;
+const MAXIMUM_ROOT_DIRECTORY_SIZE = TOTAL_DISK_SPACE_AVAILABLE - SPACE_REQUIRED_FOR_UPDATE;
+
+const sizeExceededBy = getDirectorySize(rootDirectory) - MAXIMUM_ROOT_DIRECTORY_SIZE;
+
+const directoriesCanRemove = allDirectoriesWithSizes.filter((
+	[, size],
+) => size >= sizeExceededBy).sort(([, firstSize], [, secondSize]) => firstSize - secondSize);
+
+if (!directoriesCanRemove[0]) throw new Error('Can\'t find proper directory to remove');
+
+const [bestDirectoryToRemove, sizeOfBestDirectoryToRemove] = directoriesCanRemove[0];
+
+console.log(sizeOfBestDirectoryToRemove);

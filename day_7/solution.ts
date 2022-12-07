@@ -103,6 +103,10 @@ const fileTree = fileContent.split('\n').reduce<Array<Node>>((tree, instruction)
 	return tree;
 }, []);
 
+const rootDirectory = fileTree[0];
+
+if (rootDirectory?.type !== 'directory') throw new Error('Incorrect data');
+
 const getDirectorySize = (node: DirectoryNode): number =>
 	node.children.reduce((result, newNode) => {
 		if (newNode.type === 'file') return result + newNode.size;
@@ -111,7 +115,6 @@ const getDirectorySize = (node: DirectoryNode): number =>
 	}, 0);
 
 const findAllDirectoriesInside = (node: DirectoryNode): Array<DirectoryNode> => [
-	node,
 	...node.children.reduce((allDirectories, currentNode) => {
 		if (currentNode.type === 'file') return allDirectories;
 
@@ -128,3 +131,17 @@ const findAllDirectoriesInside = (node: DirectoryNode): Array<DirectoryNode> => 
 		return allDirectories;
 	}, new Set<DirectoryNode>()),
 ];
+
+const allDirectories = [rootDirectory, ...findAllDirectoriesInside(rootDirectory)];
+
+const allDirectoriesWithSizes = allDirectories.map(
+	(directory) => [directory, getDirectorySize(directory)] as const,
+);
+
+const SMALL_DIRECTORY_THRESHOLD = 100000;
+
+const smallDirectoriesSizeSum = allDirectoriesWithSizes.filter(([, size]) =>
+	size <= SMALL_DIRECTORY_THRESHOLD
+).reduce((result, [, size]) => result + size, 0);
+
+console.log(smallDirectoriesSizeSum);

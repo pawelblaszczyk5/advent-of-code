@@ -102,3 +102,29 @@ const fileTree = fileContent.split('\n').reduce<Array<Node>>((tree, instruction)
 
 	return tree;
 }, []);
+
+const getDirectorySize = (node: DirectoryNode): number =>
+	node.children.reduce((result, newNode) => {
+		if (newNode.type === 'file') return result + newNode.size;
+
+		return result + getDirectorySize(newNode);
+	}, 0);
+
+const findAllDirectoriesInside = (node: DirectoryNode): Array<DirectoryNode> => [
+	node,
+	...node.children.reduce((allDirectories, currentNode) => {
+		if (currentNode.type === 'file') return allDirectories;
+
+		allDirectories.add(currentNode);
+
+		currentNode.children.forEach((node) => {
+			if (node.type === 'file') return;
+
+			allDirectories.add(node);
+
+			findAllDirectoriesInside(node).forEach((node) => allDirectories.add(node));
+		});
+
+		return allDirectories;
+	}, new Set<DirectoryNode>()),
+];

@@ -19,7 +19,7 @@ const getAllTreesInGivenDirection = (
 
 		if (direction === 'right') return row.slice(columnIndex + 1);
 
-		return row.slice(0, columnIndex);
+		return row.slice(0, columnIndex).reverse();
 	}
 
 	const column = treeMap.map((row) => row[columnIndex]);
@@ -30,7 +30,7 @@ const getAllTreesInGivenDirection = (
 
 	if (direction === 'bottom') return safeColumn.slice(rowIndex + 1);
 
-	return safeColumn.slice(0, rowIndex);
+	return safeColumn.slice(0, rowIndex).reverse();
 };
 
 const visibleTrees = treeMap.reduce(
@@ -52,3 +52,36 @@ const visibleTrees = treeMap.reduce(
 );
 
 console.log(visibleTrees);
+
+// Part 2
+
+const getViewDistance = (tree: number, allTreesInGivenDirection: Array<number>) => {
+	if (allTreesInGivenDirection.length === 0) return 0;
+
+	const firstBlockingTree = allTreesInGivenDirection.findIndex((currentTree) => {
+		return currentTree >= tree;
+	});
+
+	if (firstBlockingTree === -1) return allTreesInGivenDirection.length;
+
+	return firstBlockingTree + 1;
+};
+
+const scenicScores = treeMap.map((row, rowIndex) =>
+	row.map((tree, columnIndex) =>
+		DIRECTIONS.reduce(
+			(currentScenicScore, direction) =>
+				currentScenicScore * getViewDistance(
+					tree,
+					getAllTreesInGivenDirection(
+						rowIndex,
+						columnIndex,
+						direction,
+					),
+				),
+			1,
+		)
+	)
+);
+
+console.log(Math.max(...scenicScores.flat()));

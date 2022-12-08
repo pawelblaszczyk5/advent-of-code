@@ -33,22 +33,22 @@ const getAllTreesInGivenDirection = (
 	return safeColumn.slice(0, rowIndex);
 };
 
-let visibleTrees = 0;
+const visibleTrees = treeMap.reduce(
+	(sum, row, rowIndex) =>
+		sum + row.reduce((sum, tree, columnIndex) => {
+			const isVisibleFromAnySide = DIRECTIONS.some((direction) => {
+				const allTreesInGivenDirection = getAllTreesInGivenDirection(
+					rowIndex,
+					columnIndex,
+					direction,
+				);
 
-treeMap.forEach((row, rowIndex) => {
-	row.forEach((tree, columnIndex) => {
-		const isVisibleFromAnySide = DIRECTIONS.some((direction) => {
-			const allTreesInGivenDirection = getAllTreesInGivenDirection(
-				rowIndex,
-				columnIndex,
-				direction,
-			);
+				return Math.max(...allTreesInGivenDirection) < tree;
+			});
 
-			return Math.max(...allTreesInGivenDirection) < tree;
-		});
-
-		if (isVisibleFromAnySide) visibleTrees += 1;
-	});
-});
+			return isVisibleFromAnySide ? sum + 1 : sum;
+		}, 0),
+	0,
+);
 
 console.log(visibleTrees);

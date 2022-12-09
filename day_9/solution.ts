@@ -23,7 +23,106 @@ const instructions = fileContent.split('\n').map((instructionLine) => {
 	} as Instruction;
 });
 
-console.log(instructions);
+const headPosition = { x: 50, y: 50 };
+const tailPosition = { x: 50, y: 50 };
 
-const headPosition = { x: 0, y: 0 };
-const tailPosition = { x: 0, y: 0 };
+const tailVisitedPositions = new Set<string>(['50:50']);
+
+instructions.forEach(({ direction, count }) => {
+	Array.from({ length: count }).forEach(() => {
+		switch (direction) {
+			case DIRECTION.DOWN: {
+				headPosition.y += 1;
+				break;
+			}
+			case DIRECTION.UP: {
+				headPosition.y -= 1;
+				break;
+			}
+			case DIRECTION.LEFT: {
+				headPosition.x -= 1;
+				break;
+			}
+			case DIRECTION.RIGHT: {
+				headPosition.x += 1;
+				break;
+			}
+		}
+
+		const yDifference = headPosition.y - tailPosition.y;
+		const xDifference = headPosition.x - tailPosition.x;
+
+		if (
+			Math.abs(yDifference) <= 1 &&
+			Math.abs(xDifference) <= 1
+		) return;
+
+		console.log(tailPosition);
+		console.log(headPosition);
+
+		console.log(`${yDifference}:${xDifference}`);
+
+		switch (`${yDifference}:${xDifference}`) {
+			case '2:0': {
+				tailPosition.y += 1;
+				break;
+			}
+			case '-2:0': {
+				tailPosition.y -= 1;
+				break;
+			}
+			case '0:2': {
+				tailPosition.x += 1;
+				break;
+			}
+			case '0:-2': {
+				tailPosition.x -= 1;
+				break;
+			}
+			case '2:1': {
+				tailPosition.y += 1;
+				tailPosition.x += 1;
+				break;
+			}
+			case '-2:1': {
+				tailPosition.y -= 1;
+				tailPosition.x += 1;
+				break;
+			}
+			case '2:-1': {
+				tailPosition.y += 1;
+				tailPosition.x -= 1;
+				break;
+			}
+			case '-2:-1': {
+				tailPosition.y -= 1;
+				tailPosition.x -= 1;
+				break;
+			}
+			case '1:2': {
+				tailPosition.y += 1;
+				tailPosition.x += 1;
+				break;
+			}
+			case '-1:2': {
+				tailPosition.y -= 1;
+				tailPosition.x += 1;
+				break;
+			}
+			case '1:-2': {
+				tailPosition.y += 1;
+				tailPosition.x -= 1;
+				break;
+			}
+			case '-1:-2': {
+				tailPosition.y -= 1;
+				tailPosition.x -= 1;
+				break;
+			}
+		}
+
+		tailVisitedPositions.add(`${tailPosition.y}:${tailPosition.x}`);
+	});
+});
+
+console.log(tailVisitedPositions.size);

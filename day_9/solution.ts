@@ -57,69 +57,10 @@ instructions.forEach(({ direction, count }) => {
 			Math.abs(xDifference) <= 1
 		) return;
 
-		console.log(tailPosition);
-		console.log(headPosition);
-
-		console.log(`${yDifference}:${xDifference}`);
-
-		switch (`${yDifference}:${xDifference}`) {
-			case '2:0': {
-				tailPosition.y += 1;
-				break;
-			}
-			case '-2:0': {
-				tailPosition.y -= 1;
-				break;
-			}
-			case '0:2': {
-				tailPosition.x += 1;
-				break;
-			}
-			case '0:-2': {
-				tailPosition.x -= 1;
-				break;
-			}
-			case '2:1': {
-				tailPosition.y += 1;
-				tailPosition.x += 1;
-				break;
-			}
-			case '-2:1': {
-				tailPosition.y -= 1;
-				tailPosition.x += 1;
-				break;
-			}
-			case '2:-1': {
-				tailPosition.y += 1;
-				tailPosition.x -= 1;
-				break;
-			}
-			case '-2:-1': {
-				tailPosition.y -= 1;
-				tailPosition.x -= 1;
-				break;
-			}
-			case '1:2': {
-				tailPosition.y += 1;
-				tailPosition.x += 1;
-				break;
-			}
-			case '-1:2': {
-				tailPosition.y -= 1;
-				tailPosition.x += 1;
-				break;
-			}
-			case '1:-2': {
-				tailPosition.y += 1;
-				tailPosition.x -= 1;
-				break;
-			}
-			case '-1:-2': {
-				tailPosition.y -= 1;
-				tailPosition.x -= 1;
-				break;
-			}
-		}
+		if (yDifference >= 1) tailPosition.y += 1;
+		if (yDifference <= -1) tailPosition.y -= 1;
+		if (xDifference >= 1) tailPosition.x += 1;
+		if (xDifference <= -1) tailPosition.x -= 1;
 
 		tailVisitedPositions.add(`${tailPosition.y}:${tailPosition.x}`);
 	});

@@ -25,9 +25,8 @@ let cycleCounts = 0;
 const signalStrength: Array<number> = [];
 const crtDisplay: Array<Array<typeof PIXEL[keyof typeof PIXEL]>> = [];
 
-const isCommand = (value: unknown): value is Command => {
-	return typeof value === 'string' && Object.values(COMMAND).includes(value as any);
-};
+const isCommand = (value: unknown): value is Command =>
+	typeof value === 'string' && Object.values(COMMAND).includes(value as any);
 
 const checkSignalStrength = () => {
 	if ((cycleCounts + 20) % 40 !== 0) return;
@@ -59,9 +58,7 @@ instructions.forEach((instruction) => {
 
 	invokeCycles(command);
 
-	if (command === COMMAND.ADDX) {
-		xRegister += Number(parameter);
-	}
+	if (command === COMMAND.ADDX) xRegister += Number(parameter);
 });
 
 const signalStrengthSum = signalStrength.reduce((sum, current) => sum + current, 0);

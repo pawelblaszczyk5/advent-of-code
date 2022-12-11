@@ -56,17 +56,13 @@ const parseOperation = (operation: string): Monkey['operation'] => {
 	};
 };
 
-const parseTest = (test: string, testIfTrue: string, testIfFalse: string): Monkey['test'] => {
-	console.log(test, testIfFalse, testIfTrue);
-
-	return {
-		divisbleBy: Number(test.slice(18)),
-		throwDestinations: {
-			ifFalse: Number(testIfFalse.slice(26)),
-			ifTrue: Number(testIfTrue.slice(25)),
-		},
-	};
-};
+const parseTest = (test: string, testIfTrue: string, testIfFalse: string): Monkey['test'] => ({
+	divisbleBy: Number(test.slice(18)),
+	throwDestinations: {
+		ifFalse: Number(testIfFalse.slice(26)),
+		ifTrue: Number(testIfTrue.slice(25)),
+	},
+});
 
 const monkeys = fileContent.split('\n\n').map<Monkey>((monkeyDescription) => {
 	const [, startingItems, operation, test, testIfTrue, testIfFalse] = monkeyDescription.split('\n')

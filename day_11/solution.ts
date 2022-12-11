@@ -10,7 +10,7 @@ const PARAMETER = {
 } as const;
 
 type OperationType = typeof OPERATION_TYPE[keyof typeof OPERATION_TYPE];
-type Parameter = typeof PARAMETER[keyof typeof PARAMETER];
+type Parameter = typeof PARAMETER[keyof typeof PARAMETER] | number;
 
 type Monkey = {
 	items: Array<number>;
@@ -80,7 +80,10 @@ const monkeys = fileContent.split('\n\n').map<Monkey>((monkeyDescription) => {
 	};
 });
 
-const STATIC_BORING_MODIFIER = 3;
+const denominator = monkeys.reduce(
+	(denominator, monkey) => denominator * monkey.test.divisbleBy,
+	1,
+);
 
 const calculateNewItemWorryLevel = (item: number, operation: Monkey['operation']) => {
 	const [firstParameter, secondParameter] = operation.parameters.map((parameter) =>
@@ -99,10 +102,7 @@ const playRound = () => {
 
 		items.forEach((item) => {
 			const newItemWorryLevel = calculateNewItemWorryLevel(item, operation);
-			const itemWorryLevelAfterGettingBored = Math.floor(
-				newItemWorryLevel / STATIC_BORING_MODIFIER,
-			);
-			const hasPassedTest = itemWorryLevelAfterGettingBored % test.divisbleBy === 0;
+			const hasPassedTest = newItemWorryLevel % test.divisbleBy === 0;
 			const monkeyThrowDestination =
 				monkeys[hasPassedTest ? test.throwDestinations.ifTrue : test.throwDestinations.ifFalse];
 
@@ -110,14 +110,14 @@ const playRound = () => {
 
 			if (!monkeyThrowDestination) throw new Error('Can\'t find monkey to throw item');
 
-			monkeyThrowDestination.items.push(itemWorryLevelAfterGettingBored);
+			monkeyThrowDestination.items.push(newItemWorryLevel % denominator);
 		});
 
 		monkey.items = [];
 	});
 };
 
-Array.from({ length: 20 }).forEach(() => playRound());
+Array.from({ length: 10000 }).forEach(() => playRound());
 
 const monkeyBuisnessLevel = monkeys.map(({ itemsInspected }) => itemsInspected).sort((a, b) =>
 	b - a

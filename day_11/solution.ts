@@ -6,12 +6,11 @@ const OPERATION_TYPE = {
 } as const;
 
 const PARAMETER = {
-	NEW: 'new',
 	OLD: 'old',
 } as const;
 
 type OperationType = typeof OPERATION_TYPE[keyof typeof OPERATION_TYPE];
-type Parameter = typeof PARAMETER[keyof typeof PARAMETER] | number;
+type Parameter = typeof PARAMETER[keyof typeof PARAMETER];
 
 type Monkey = {
 	items: Array<number>;
@@ -78,5 +77,42 @@ const monkeys = fileContent.split('\n\n').map<Monkey>((monkeyDescription) => {
 		test: parseTest(test, testIfTrue, testIfFalse),
 	};
 });
+
+const STATIC_BORING_MODIFIER = 3;
+
+const calculateNewItemWorryLevel = (item: number, operation: Monkey['operation']) => {
+	const [firstParameter, secondParameter] = operation.parameters.map((parameter) =>
+		parameter === PARAMETER.OLD ? item : parameter
+	) as [number, number];
+
+	if (operation.type === OPERATION_TYPE.ADD) return firstParameter + secondParameter;
+	if (operation.type === OPERATION_TYPE.MULTIPLY) return firstParameter * secondParameter;
+
+	throw new Error('Unsupported operation');
+};
+
+const playRound = () => {
+	monkeys.forEach((monkey) => {
+		const { items, operation, test } = monkey;
+
+		items.forEach((item) => {
+			const newItemWorryLevel = calculateNewItemWorryLevel(item, operation);
+			const itemWorryLevelAfterGettingBored = Math.floor(
+				newItemWorryLevel / STATIC_BORING_MODIFIER,
+			);
+			const hasPassedTest = itemWorryLevelAfterGettingBored % test.divisbleBy === 0;
+			const monkeyThrowDestination =
+				monkeys[hasPassedTest ? test.throwDestinations.ifTrue : test.throwDestinations.ifFalse];
+
+			if (!monkeyThrowDestination) throw new Error('Can\'t find monkey to throw item');
+
+			monkeyThrowDestination.items.push(itemWorryLevelAfterGettingBored);
+		});
+
+		monkey.items = [];
+	});
+};
+
+playRound();
 
 console.log(monkeys);

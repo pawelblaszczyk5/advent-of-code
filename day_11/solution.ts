@@ -25,6 +25,7 @@ type Monkey = {
 			ifFalse: number;
 		};
 	};
+	itemsInspected: number;
 };
 
 const isOperationType = (value: unknown): value is OperationType =>
@@ -75,6 +76,7 @@ const monkeys = fileContent.split('\n\n').map<Monkey>((monkeyDescription) => {
 		items: parseStartingItems(startingItems),
 		operation: parseOperation(operation),
 		test: parseTest(test, testIfTrue, testIfFalse),
+		itemsInspected: 0,
 	};
 });
 
@@ -104,6 +106,8 @@ const playRound = () => {
 			const monkeyThrowDestination =
 				monkeys[hasPassedTest ? test.throwDestinations.ifTrue : test.throwDestinations.ifFalse];
 
+			monkey.itemsInspected += 1;
+
 			if (!monkeyThrowDestination) throw new Error('Can\'t find monkey to throw item');
 
 			monkeyThrowDestination.items.push(itemWorryLevelAfterGettingBored);
@@ -113,6 +117,11 @@ const playRound = () => {
 	});
 };
 
-playRound();
+Array.from({ length: 20 }).forEach(() => playRound());
+
+const monkeyBuisnessLevel = monkeys.map(({ itemsInspected }) => itemsInspected).sort((a, b) =>
+	b - a
+).slice(0, 2).reduce((currentLevel, value) => currentLevel * value, 1);
 
 console.log(monkeys);
+console.log(monkeyBuisnessLevel);

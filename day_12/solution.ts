@@ -25,6 +25,9 @@ const findPlace = (place: Place): [number, number] => {
 	return [y, x];
 };
 
+const isPlace = (value: unknown): value is Place =>
+	typeof value === 'string' && Object.values(PLACE).includes(value as any);
+
 const getEstimatedDistance = ([startY, startX]: [number, number], [endY, endX]: [number, number]) =>
 	Math.abs(startX - endX) + Math.abs(startY - endY);
 
@@ -46,8 +49,8 @@ const getSuccessors = (
 
 		if (!successor || !parent) return;
 
-		const successorHeight = PLACE_HEIGHT[successor] ?? successor.charCodeAt(0);
-		const parentHeight = PLACE_HEIGHT[parent] ?? parent.charCodeAt(0);
+		const successorHeight = isPlace(successor) ? PLACE_HEIGHT[successor] : successor.charCodeAt(0);
+		const parentHeight = isPlace(parent) ? PLACE_HEIGHT[parent] : parent.charCodeAt(0);
 
 		return parentHeight - successorHeight >= -1;
 	}) as Array<[number, number]>;
@@ -165,12 +168,15 @@ const allPossibleStartingPositions = parsedMountain.reduce<Array<[number, number
 	[],
 );
 
-const shortestSolutionFromLowestPoint =
-	allPossibleStartingPositions.map((startCoords) => findBestPath(startCoords, endCoords)).filter(
-		(path) => path !== 0,
-	).sort((
-		a,
-		b,
-	) => a - b)[0];
+const shortestSolutionFromLowestPoint = allPossibleStartingPositions.reduce(
+	(shortestNotEmptyPath, coords) => {
+		const pathLength = findBestPath(coords, endCoords);
+
+		return pathLength !== 0 && pathLength < shortestNotEmptyPath
+			? pathLength
+			: shortestNotEmptyPath;
+	},
+	Infinity,
+);
 
 console.log(shortestSolutionFromLowestPoint);

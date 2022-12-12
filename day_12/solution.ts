@@ -7,6 +7,9 @@ const PLACE = {
 	END: 'E',
 } as const;
 
+const START_HEIGHT = 'a'.charCodeAt(0);
+const END_HEIGHT = 'z'.charCodeAt(0);
+
 type Place = typeof PLACE[keyof typeof PLACE];
 
 const findPlace = (place: Place): [number, number] => {
@@ -27,11 +30,25 @@ const getSuccessors = (
 	[y, x]: [number, number],
 ) =>
 	[
-		parsedMountain[y - 1]?.[x] ? [y - 1, x] : null,
-		parsedMountain[y + 1]?.[x] ? [y + 1, x] : null,
-		parsedMountain[y]?.[x - 1] ? [y, x - 1] : null,
-		parsedMountain[y]?.[x + 1] ? [y, x + 1] : null,
-	].filter((value) => value !== null) as Array<[number, number]>;
+		parsedMountain[y - 1]?.[x] ? [y - 1, x] as const : null,
+		parsedMountain[y + 1]?.[x] ? [y + 1, x] as const : null,
+		parsedMountain[y]?.[x - 1] ? [y, x - 1] as const : null,
+		parsedMountain[y]?.[x + 1] ? [y, x + 1] as const : null,
+	].filter((value) => {
+		if (value === null) return;
+
+		const [newY, newX] = value;
+
+		const successor = parsedMountain[newY]?.[newX];
+		const parent = parsedMountain[y]?.[x];
+
+		if (!successor || !parent) return;
+
+		const successorHeight = successor === PLACE.END ? END_HEIGHT : successor.charCodeAt(0);
+		const parentHeight = parent === PLACE.START ? START_HEIGHT : parent.charCodeAt(0);
+
+		return parentHeight - successorHeight >= -1;
+	}) as Array<[number, number]>;
 
 const startCoords = findPlace(PLACE.START);
 const endCoords = findPlace(PLACE.END);
@@ -100,7 +117,7 @@ const findBestPath = () => {
 				node.x === successorNode.x && node.y === successorNode.y
 			);
 
-			if (nodeFromOpenList && nodeFromOpenList.estimatedValue < successorNode.estimatedValue) {
+			if (nodeFromOpenList && nodeFromOpenList.estimatedValue <= successorNode.estimatedValue) {
 				return;
 			}
 
@@ -108,7 +125,7 @@ const findBestPath = () => {
 				node.x === successorNode.x && node.y === successorNode.y
 			);
 
-			if (nodeFromClosedList && nodeFromClosedList.estimatedValue < successorNode.estimatedValue) {
+			if (nodeFromClosedList && nodeFromClosedList.estimatedValue <= successorNode.estimatedValue) {
 				return;
 			}
 

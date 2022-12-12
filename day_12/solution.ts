@@ -7,8 +7,10 @@ const PLACE = {
 	END: 'E',
 } as const;
 
-const START_HEIGHT = 'a'.charCodeAt(0);
-const END_HEIGHT = 'z'.charCodeAt(0);
+const PLACE_HEIGHT = {
+	[PLACE.START]: 'a'.charCodeAt(0),
+	[PLACE.END]: 'z'.charCodeAt(0),
+} as const;
 
 type Place = typeof PLACE[keyof typeof PLACE];
 
@@ -44,8 +46,8 @@ const getSuccessors = (
 
 		if (!successor || !parent) return;
 
-		const successorHeight = successor === PLACE.END ? END_HEIGHT : successor.charCodeAt(0);
-		const parentHeight = parent === PLACE.START ? START_HEIGHT : parent.charCodeAt(0);
+		const successorHeight = PLACE_HEIGHT[successor] ?? successor.charCodeAt(0);
+		const parentHeight = PLACE_HEIGHT[parent] ?? parent.charCodeAt(0);
 
 		return parentHeight - successorHeight >= -1;
 	}) as Array<[number, number]>;
@@ -62,10 +64,10 @@ type Node = {
 	estimatedValue: number;
 };
 
-const openList: Array<Node> = [];
-const closedList: Array<Node> = [];
+const findBestPath = (startCoords: [number, number], endCoords: [number, number]) => {
+	const openList: Array<Node> = [];
+	const closedList: Array<Node> = [];
 
-const findBestPath = () => {
 	const estimatedDistanceToEnd = getEstimatedDistance(startCoords, endCoords);
 	const startingNode: Node = {
 		y: startCoords[0],
@@ -143,7 +145,32 @@ const findBestPath = () => {
 		nodeOnPath = nodeOnPath.parent;
 	}
 
-	console.log(path.length);
+	return path.length;
 };
 
-findBestPath();
+console.log(findBestPath(startCoords, endCoords));
+
+// Part 2
+
+const allPossibleStartingPositions = parsedMountain.reduce<Array<[number, number]>>(
+	(coords, row, rowIndex) => {
+		coords.push(...row.reduce<Array<[number, number]>>((coords, char, columnIndex) => {
+			if (char === 'a') coords.push([rowIndex, columnIndex]);
+
+			return coords;
+		}, []));
+
+		return coords;
+	},
+	[],
+);
+
+const shortestSolutionFromLowestPoint =
+	allPossibleStartingPositions.map((startCoords) => findBestPath(startCoords, endCoords)).filter(
+		(path) => path !== 0,
+	).sort((
+		a,
+		b,
+	) => a - b)[0];
+
+console.log(shortestSolutionFromLowestPoint);

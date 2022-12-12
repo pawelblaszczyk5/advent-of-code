@@ -8,4 +8,5 @@
 // import './day_8/solution.ts';
 // import './day_9/solution.ts';
 // import './day_10/solution.ts';
-import './day_11/solution.ts';
+// import './day_11/solution.ts';
+import './day_12/solution.ts';

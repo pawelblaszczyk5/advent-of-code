@@ -1,6 +1,7 @@
 const fileContent = await Deno.readTextFile(`${Deno.cwd()}/day_13/input.txt`);
 
-type Signal = Array<number | Array<Signal>>;
+type Signal = number | Array<Signal>;
+type Signals = Array<Signal>;
 
 const signalsPair = fileContent.split('\n\n').map((pair) =>
 	pair.split('\n').map((value) => {
@@ -10,6 +11,6 @@ const signalsPair = fileContent.split('\n\n').map((pair) =>
 			console.log(e);
 		}
 	})
-) as Array<[Signal, Signal]>;
+) as Array<[Signals, Signals]>;
 
 console.log(signalsPair);

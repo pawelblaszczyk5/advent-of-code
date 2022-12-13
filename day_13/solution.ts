@@ -4,13 +4,7 @@ type Signal = number | Array<Signal>;
 type Signals = Array<Signal>;
 
 const signalsPair = fileContent.split('\n\n').map((pair) =>
-	pair.split('\n').map((value) => {
-		try {
-			return JSON.parse(value);
-		} catch (e) {
-			console.log(e);
-		}
-	})
+	pair.split('\n').map((value) => JSON.parse(value))
 ) as Array<[Signals, Signals]>;
 
 const isSignal = (value: Signal | undefined): value is Signal =>

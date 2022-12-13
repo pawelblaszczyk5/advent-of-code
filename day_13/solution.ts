@@ -49,3 +49,16 @@ const sumOfPassingIndexes = signalsPair.reduce<number>(
 );
 
 console.log(sumOfPassingIndexes);
+
+const firstDividerPacket = [[2]];
+const secondDividerPacket = [[6]];
+
+const allPairsSorted = [...signalsPair.flat(), firstDividerPacket, secondDividerPacket].sort((
+	a,
+	b,
+) => compareSignals(b, a));
+
+const decoderKey = (allPairsSorted.indexOf(firstDividerPacket) + 1) *
+	(allPairsSorted.indexOf(secondDividerPacket) + 1);
+
+console.log(decoderKey);

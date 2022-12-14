@@ -36,12 +36,14 @@ const GRID_POINT = {
 } as const;
 
 const GRID_WIDTH = 1000;
-const GRID_HEIGHT = maxHeight + 5;
+const GRID_HEIGHT = maxHeight + 4;
 
 const grid: Array<Array<typeof GRID_POINT[keyof typeof GRID_POINT]>> = Array.from(
 	{ length: GRID_HEIGHT },
 	() => Array.from({ length: GRID_WIDTH }, () => GRID_POINT.AIR),
 );
+
+grid[GRID_HEIGHT - 2] = grid[GRID_HEIGHT - 2]!.map(() => GRID_POINT.ROCK);
 
 grid[0]![500]! = GRID_POINT.SAND_SOURCE;
 
@@ -95,10 +97,7 @@ const simulateSand = () => {
 		while (true) {
 			const [y, x] = sandCoordinates;
 
-			if (!grid[y + 1]?.[x]) {
-				result = sandParticles;
-				break;
-			} else if (grid[y + 1]?.[x] === GRID_POINT.AIR) {
+			if (grid[y + 1]?.[x] === GRID_POINT.AIR) {
 				grid[y + 1]![x] = GRID_POINT.SAND;
 
 				cleanPreviousSand([y, x]);
@@ -119,12 +118,18 @@ const simulateSand = () => {
 				sandCoordinates[0] = y + 1;
 				sandCoordinates[1] = x + 1;
 			} else {
+				if (
+					grid[1]?.[500] === GRID_POINT.SAND && grid[1]?.[499] === GRID_POINT.SAND &&
+					grid[1]?.[501] === GRID_POINT.SAND && grid[2]?.[501] === GRID_POINT.SAND
+				) {
+					result = sandParticles;
+				}
 				break;
 			}
 		}
 	}
 
-	return result - 1;
+	return result + 1;
 };
 
 const maxSandParticles = simulateSand();

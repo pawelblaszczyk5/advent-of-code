@@ -120,7 +120,7 @@ const simulateSand = () => {
 			} else {
 				if (
 					grid[1]?.[500] === GRID_POINT.SAND && grid[1]?.[499] === GRID_POINT.SAND &&
-					grid[1]?.[501] === GRID_POINT.SAND && grid[2]?.[501] === GRID_POINT.SAND
+					grid[1]?.[501] === GRID_POINT.SAND
 				) {
 					result = sandParticles;
 				}

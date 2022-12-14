@@ -80,8 +80,15 @@ const simulateSand = () => {
 	let result = 0;
 	let sandParticles = 0;
 
+	const cleanPreviousSand = ([y, x]: [number, number]) => {
+		if (grid[y]![x] === GRID_POINT.SAND) {
+			grid[y]![x] = GRID_POINT.AIR;
+		}
+	};
+
 	while (!result) {
 		const sandCoordinates: [number, number] = [0, 500];
+
 		sandParticles += 1;
 		console.log(grid.map((row) => row.slice(minWidth - 5, maxWidth + 5).join('')).join('\n'));
 
@@ -89,32 +96,25 @@ const simulateSand = () => {
 			const [y, x] = sandCoordinates;
 
 			if (!grid[y + 1]?.[x]) {
-				console.log('tutaj');
 				result = sandParticles;
 				break;
 			} else if (grid[y + 1]?.[x] === GRID_POINT.AIR) {
 				grid[y + 1]![x] = GRID_POINT.SAND;
 
-				if (grid[y]![x] === GRID_POINT.SAND) {
-					grid[y]![x] = GRID_POINT.AIR;
-				}
+				cleanPreviousSand([y, x]);
 
 				sandCoordinates[0] = y + 1;
 			} else if (grid[y + 1]?.[x - 1] === GRID_POINT.AIR) {
 				grid[y + 1]![x - 1] = GRID_POINT.SAND;
 
-				if (grid[y]![x] === GRID_POINT.SAND) {
-					grid[y]![x] = GRID_POINT.AIR;
-				}
+				cleanPreviousSand([y, x]);
 
 				sandCoordinates[0] = y + 1;
 				sandCoordinates[1] = x - 1;
 			} else if (grid[y + 1]?.[x + 1] === GRID_POINT.AIR) {
 				grid[y + 1]![x + 1] = GRID_POINT.SAND;
 
-				if (grid[y]![x] === GRID_POINT.SAND) {
-					grid[y]![x] = GRID_POINT.AIR;
-				}
+				cleanPreviousSand([y, x]);
 
 				sandCoordinates[0] = y + 1;
 				sandCoordinates[1] = x + 1;
@@ -124,7 +124,9 @@ const simulateSand = () => {
 		}
 	}
 
-	console.log(result);
+	return result - 1;
 };
 
-simulateSand();
+const maxSandParticles = simulateSand();
+
+console.log(maxSandParticles);

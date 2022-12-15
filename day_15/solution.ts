@@ -64,3 +64,16 @@ const drawBeaconsAndSensors = () => {
 };
 
 drawBeaconsAndSensors();
+
+const getManhattanDistance = ([startY, startX]: [number, number], [endY, endX]: [number, number]) =>
+	Math.abs(startX - endX) + Math.abs(startY - endY);
+
+const drawSensorsRanges = () => {
+	instructions.forEach(({ sensorX, sensorY, beaconX, beaconY }) => {
+		const distanceToClosestSensor = getManhattanDistance([sensorY, sensorX], [beaconY, beaconX]);
+
+		console.log(distanceToClosestSensor);
+	});
+};
+
+drawSensorsRanges();

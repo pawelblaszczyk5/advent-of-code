@@ -42,8 +42,6 @@ const instructions = fileContent.split('\n').map((instruction) => {
 	};
 });
 
-console.log(instructions);
-
 const Y_OFFSET = Math.abs(minHeight);
 const X_OFFSET = Math.abs(minWidth);
 
@@ -53,14 +51,16 @@ const grid: Array<Array<typeof GRID_POINT[keyof typeof GRID_POINT]>> = Array.fro
 	length: maxHeight - minHeight + 1,
 }, () => Array.from({ length: maxWidth - minWidth + 1 }, () => GRID_POINT.EMPTY));
 
-instructions.forEach(({ sensorX, sensorY, beaconX, beaconY }) => {
-	if (!grid[beaconY + Y_OFFSET]?.[beaconX + X_OFFSET]) throw new Error('Incorrect data');
+const drawBeaconsAndSensors = () => {
+	instructions.forEach(({ sensorX, sensorY, beaconX, beaconY }) => {
+		if (!grid[beaconY + Y_OFFSET]?.[beaconX + X_OFFSET]) throw new Error('Incorrect data');
 
-	grid[beaconY + Y_OFFSET]![beaconX + X_OFFSET] = GRID_POINT.BEACON;
+		grid[beaconY + Y_OFFSET]![beaconX + X_OFFSET] = GRID_POINT.BEACON;
 
-	if (!grid[sensorY + Y_OFFSET]?.[sensorX + X_OFFSET]) throw new Error('Incorrect data');
+		if (!grid[sensorY + Y_OFFSET]?.[sensorX + X_OFFSET]) throw new Error('Incorrect data');
 
-	grid[sensorY + Y_OFFSET]![sensorX + X_OFFSET] = GRID_POINT.SENSOR;
-});
+		grid[sensorY + Y_OFFSET]![sensorX + X_OFFSET] = GRID_POINT.SENSOR;
+	});
+};
 
-console.log(grid.map((row) => row.join('')).join('\n'));
+drawBeaconsAndSensors();

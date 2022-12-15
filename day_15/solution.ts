@@ -49,35 +49,58 @@ const instructions = fileContent.split('\n').map((instruction) => {
 	};
 });
 
-const Y_OFFSET = Math.abs(minHeight - maxDistance);
-const X_OFFSET = Math.abs(minWidth - maxDistance);
+const X_OFFSET = maxWidth - minWidth - maxDistance;
+const INTERESTING_LINE = 2000000;
 
-const grid: Array<Array<typeof GRID_POINT[keyof typeof GRID_POINT]>> = Array.from({
-	length: maxHeight - minHeight + 2 * maxDistance + 1,
-}, () => Array.from({ length: maxWidth - minWidth + 2 * maxDistance + 1 }, () => GRID_POINT.EMPTY));
+const row: Array<typeof GRID_POINT[keyof typeof GRID_POINT]> = Array.from({
+	length: maxWidth - minWidth + 2 * maxDistance + 1,
+}, () => GRID_POINT.EMPTY);
 
-const printGrid = () => {
-	console.log(grid.map((row) => row.join('')).join('\n'));
+const drawLine = (
+	[firstX, secondX]: readonly [number, number],
+) => {
+	for (let index = Math.min(firstX, secondX); index <= Math.max(firstX, secondX); index++) {
+		if (row[index] === GRID_POINT.EMPTY) {
+			row[index] = GRID_POINT.SENSOR_RANGE;
+		}
+	}
+	return;
 };
 
-const drawBeaconsAndSensors = () => {
+const drawBeaconsAndSensors = (line: number) => {
 	instructions.forEach(({ sensorX, sensorY, beaconX, beaconY }) => {
-		if (!grid[beaconY + Y_OFFSET]?.[beaconX + X_OFFSET]) throw new Error('Incorrect data');
+		if (beaconY === line) {
+			row[beaconX + X_OFFSET] = GRID_POINT.BEACON;
+		}
 
-		grid[beaconY + Y_OFFSET]![beaconX + X_OFFSET] = GRID_POINT.BEACON;
-
-		if (!grid[sensorY + Y_OFFSET]?.[sensorX + X_OFFSET]) throw new Error('Incorrect data');
-
-		grid[sensorY + Y_OFFSET]![sensorX + X_OFFSET] = GRID_POINT.SENSOR;
+		if (sensorY === line) {
+			row[sensorX + X_OFFSET] = GRID_POINT.SENSOR;
+		}
 	});
 };
 
-drawBeaconsAndSensors();
+drawBeaconsAndSensors(INTERESTING_LINE);
 
-const drawSensorsRanges = () => {
-	instructions.forEach(({ sensorX, sensorY, beaconX, beaconY, distanceBetween }) => {
-		console.log(distanceBetween);
-	});
+const drawSensorsRanges = (line: number) => {
+	instructions.forEach(
+		({ sensorX, sensorY, distanceBetween }) => {
+			for (let index = -distanceBetween; index <= distanceBetween; index++) {
+				const lineLength = (distanceBetween - Math.abs(index)) * 2 + 1;
+				const halfLineLength = Math.floor(lineLength / 2);
+
+				if (sensorY + index !== line) continue;
+
+				console.log(sensorY + index, line);
+				drawLine([sensorX + X_OFFSET - halfLineLength, sensorX + X_OFFSET + halfLineLength]);
+			}
+		},
+	);
 };
 
-drawSensorsRanges();
+drawSensorsRanges(INTERESTING_LINE);
+
+const findBlockedPositionsForGivenY = () => {
+	return row.filter((point) => point === GRID_POINT.SENSOR_RANGE).length;
+};
+
+console.log(findBlockedPositionsForGivenY());

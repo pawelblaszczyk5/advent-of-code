@@ -71,7 +71,6 @@ const drawLine = (
 			row[index] = GRID_POINT.SENSOR_RANGE;
 		}
 	}
-	return;
 };
 
 const drawBeaconsAndSensors = (row: Row, line: number) => {
@@ -90,42 +89,32 @@ const drawSensorsRanges = (row: Row, line: number) => {
 	instructions.forEach(
 		({ sensorX, sensorY, distanceBetween }) => {
 			if (sensorY - distanceBetween < line && sensorY + distanceBetween > line) {
-				for (let index = -distanceBetween; index <= distanceBetween; index++) {
-					const lineLength = (distanceBetween - Math.abs(index)) * 2 + 1;
-					const halfLineLength = Math.floor(lineLength / 2);
+				const lineLength = (distanceBetween - Math.abs(line - sensorY)) * 2 + 1;
+				const halfLineLength = Math.floor(lineLength / 2);
 
-					if (sensorY + index !== line) continue;
-
-					drawLine(row, [sensorX + X_OFFSET - halfLineLength, sensorX + X_OFFSET + halfLineLength]);
-				}
+				drawLine(row, [sensorX + X_OFFSET - halfLineLength, sensorX + X_OFFSET + halfLineLength]);
 			}
 		},
 	);
 };
 
 const MIN_Y = 0;
-const MAX_Y = 4000000;
+const MAX_Y = 20;
 
 for (let index = MIN_Y; index <= MAX_Y; index++) {
 	clearRow();
-
 	drawBeaconsAndSensors(row, index);
 	drawSensorsRanges(row, index);
 
-	const indexOfFirstBlock = row.findIndex((point) => point !== GRID_POINT.EMPTY);
-	const indexOfLastBlock = row.findLastIndex((point) => point !== GRID_POINT.EMPTY);
-
-	const emptyBlockIndex = row.slice(
-		indexOfFirstBlock,
-		indexOfLastBlock,
-	).indexOf(GRID_POINT.EMPTY);
-
-	console.log(index);
-
-	if (emptyBlockIndex === -1) continue;
-
-	console.log(
-		index + (emptyBlockIndex - X_OFFSET +
-					indexOfFirstBlock) * 4000000,
+	const emptyBlockIndex = row.findIndex(
+		(point, index) =>
+			point === GRID_POINT.EMPTY && row[index - 1] !== GRID_POINT.EMPTY &&
+			row[index + 1] !== GRID_POINT.EMPTY,
 	);
+
+	if (emptyBlockIndex !== -1) {
+		console.log(
+			(emptyBlockIndex - X_OFFSET) * 4000000 + index,
+		);
+	}
 }

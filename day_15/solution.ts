@@ -6,6 +6,7 @@ let minHeight = Infinity;
 let maxHeight = -Infinity;
 let minWidth = Infinity;
 let maxWidth = -Infinity;
+let maxDistance = -Infinity;
 
 const GRID_POINT = {
 	BEACON: 'B',
@@ -13,6 +14,9 @@ const GRID_POINT = {
 	SENSOR_RANGE: '#',
 	EMPTY: '.',
 } as const;
+
+const getManhattanDistance = ([startY, startX]: [number, number], [endY, endX]: [number, number]) =>
+	Math.abs(startX - endX) + Math.abs(startY - endY);
 
 const instructions = fileContent.split('\n').map((instruction) => {
 	const matches = instruction.match(instructionParsingRegex);
@@ -28,28 +32,33 @@ const instructions = fileContent.split('\n').map((instruction) => {
 	const sensorY = Number(unparsedSensorY);
 	const beaconX = Number(unparsedBeaconX);
 	const beaconY = Number(unparsedBeaconY);
+	const distanceBetween = getManhattanDistance([sensorY, sensorX], [beaconY, beaconX]);
 
 	minHeight = Math.min(sensorY, beaconY, minHeight);
 	maxHeight = Math.max(sensorY, beaconY, maxHeight);
 	minWidth = Math.min(sensorX, beaconX, minWidth);
 	maxWidth = Math.max(sensorX, beaconX, maxWidth);
+	maxDistance = Math.max(maxDistance, distanceBetween);
 
 	return {
 		sensorX,
 		sensorY,
 		beaconY,
 		beaconX,
+		distanceBetween,
 	};
 });
 
-const Y_OFFSET = Math.abs(minHeight);
-const X_OFFSET = Math.abs(minWidth);
-
-console.log(maxHeight, maxWidth, minHeight, minWidth);
+const Y_OFFSET = Math.abs(minHeight - maxDistance);
+const X_OFFSET = Math.abs(minWidth - maxDistance);
 
 const grid: Array<Array<typeof GRID_POINT[keyof typeof GRID_POINT]>> = Array.from({
-	length: maxHeight - minHeight + 1,
-}, () => Array.from({ length: maxWidth - minWidth + 1 }, () => GRID_POINT.EMPTY));
+	length: maxHeight - minHeight + 2 * maxDistance + 1,
+}, () => Array.from({ length: maxWidth - minWidth + 2 * maxDistance + 1 }, () => GRID_POINT.EMPTY));
+
+const printGrid = () => {
+	console.log(grid.map((row) => row.join('')).join('\n'));
+};
 
 const drawBeaconsAndSensors = () => {
 	instructions.forEach(({ sensorX, sensorY, beaconX, beaconY }) => {
@@ -65,14 +74,9 @@ const drawBeaconsAndSensors = () => {
 
 drawBeaconsAndSensors();
 
-const getManhattanDistance = ([startY, startX]: [number, number], [endY, endX]: [number, number]) =>
-	Math.abs(startX - endX) + Math.abs(startY - endY);
-
 const drawSensorsRanges = () => {
-	instructions.forEach(({ sensorX, sensorY, beaconX, beaconY }) => {
-		const distanceToClosestSensor = getManhattanDistance([sensorY, sensorX], [beaconY, beaconX]);
-
-		console.log(distanceToClosestSensor);
+	instructions.forEach(({ sensorX, sensorY, beaconX, beaconY, distanceBetween }) => {
+		console.log(distanceBetween);
 	});
 };
 

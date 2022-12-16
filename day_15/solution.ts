@@ -2,19 +2,6 @@ const fileContent = await Deno.readTextFile(`${Deno.cwd()}/day_15/input.txt`);
 const instructionParsingRegex =
 	/Sensor at x=(-?\d+), y=(-?\d+): closest beacon is at x=(-?\d+), y=(-?\d+)/;
 
-let minHeight = Infinity;
-let maxHeight = -Infinity;
-let minWidth = Infinity;
-let maxWidth = -Infinity;
-let maxDistance = -Infinity;
-
-const GRID_POINT = {
-	BEACON: 'B',
-	SENSOR: 'S',
-	SENSOR_RANGE: '#',
-	EMPTY: '.',
-} as const;
-
 const getManhattanDistance = ([startY, startX]: [number, number], [endY, endX]: [number, number]) =>
 	Math.abs(startX - endX) + Math.abs(startY - endY);
 
@@ -22,6 +9,7 @@ const instructions = fileContent.split('\n').map((instruction) => {
 	const matches = instruction.match(instructionParsingRegex);
 
 	if (!matches) throw new Error('Incorrect data');
+
 	const [, unparsedSensorX, unparsedSensorY, unparsedBeaconX, unparsedBeaconY] = matches;
 
 	if (!unparsedSensorX || !unparsedSensorY || !unparsedBeaconX || !unparsedBeaconY) {
@@ -34,87 +22,68 @@ const instructions = fileContent.split('\n').map((instruction) => {
 	const beaconY = Number(unparsedBeaconY);
 	const distanceBetween = getManhattanDistance([sensorY, sensorX], [beaconY, beaconX]);
 
-	minHeight = Math.min(sensorY, beaconY, minHeight);
-	maxHeight = Math.max(sensorY, beaconY, maxHeight);
-	minWidth = Math.min(sensorX, beaconX, minWidth);
-	maxWidth = Math.max(sensorX, beaconX, maxWidth);
-	maxDistance = Math.max(maxDistance, distanceBetween);
-
 	return {
 		sensorX,
 		sensorY,
-		beaconY,
-		beaconX,
 		distanceBetween,
 	};
 });
 
-const X_OFFSET = maxWidth - minWidth - maxDistance;
+const drawSensorsRanges = (line: number): Array<[number, number]> => {
+	const ranges: Array<[number, number]> = [];
 
-type Row = Array<typeof GRID_POINT[keyof typeof GRID_POINT]>;
-
-const createRow = (): Row =>
-	Array.from({
-		length: maxWidth - minWidth + 2 * maxDistance + 1,
-	}, () => GRID_POINT.EMPTY);
-
-const row = createRow();
-
-const clearRow = () => row.fill(GRID_POINT.EMPTY);
-
-const drawLine = (
-	row: Row,
-	[firstX, secondX]: readonly [number, number],
-) => {
-	for (let index = Math.min(firstX, secondX); index <= Math.max(firstX, secondX); index++) {
-		if (row[index] === GRID_POINT.EMPTY) {
-			row[index] = GRID_POINT.SENSOR_RANGE;
-		}
-	}
-};
-
-const drawBeaconsAndSensors = (row: Row, line: number) => {
-	instructions.forEach(({ sensorX, sensorY, beaconX, beaconY }) => {
-		if (beaconY === line) {
-			row[beaconX + X_OFFSET] = GRID_POINT.BEACON;
-		}
-
-		if (sensorY === line) {
-			row[sensorX + X_OFFSET] = GRID_POINT.SENSOR;
-		}
-	});
-};
-
-const drawSensorsRanges = (row: Row, line: number) => {
 	instructions.forEach(
 		({ sensorX, sensorY, distanceBetween }) => {
 			if (sensorY - distanceBetween < line && sensorY + distanceBetween > line) {
 				const lineLength = (distanceBetween - Math.abs(line - sensorY)) * 2 + 1;
 				const halfLineLength = Math.floor(lineLength / 2);
 
-				drawLine(row, [sensorX + X_OFFSET - halfLineLength, sensorX + X_OFFSET + halfLineLength]);
+				ranges.push([
+					sensorX - halfLineLength,
+					sensorX + halfLineLength,
+				]);
 			}
 		},
 	);
+
+	return ranges.sort(([a], [z]) => a - z).reduce<Array<[number, number]>>((result, range) => {
+		if (!result.length) {
+			result.push(range);
+
+			return result;
+		}
+
+		const top = result.at(-1);
+
+		if (!top) throw new Error('Unexpected error');
+
+		if (top[1] < range[0]) {
+			result.push(range);
+		} else if (top[1] < range[1]) {
+			top[1] = range[1];
+		}
+
+		return result;
+	}, []);
 };
 
 const MIN_Y = 0;
-const MAX_Y = 20;
+const MAX_Y = 4000000;
 
-for (let index = MIN_Y; index <= MAX_Y; index++) {
-	clearRow();
-	drawBeaconsAndSensors(row, index);
-	drawSensorsRanges(row, index);
+for (let index = MIN_Y; index <= MAX_Y; index += 1) {
+	const rangesSorted = drawSensorsRanges(index).sort(([a], [z]) => a - z);
 
-	const emptyBlockIndex = row.findIndex(
-		(point, index) =>
-			point === GRID_POINT.EMPTY && row[index - 1] !== GRID_POINT.EMPTY &&
-			row[index + 1] !== GRID_POINT.EMPTY,
-	);
+	const range = rangesSorted.find(([, end], index) => {
+		const nextRange = rangesSorted[index + 1];
 
-	if (emptyBlockIndex !== -1) {
+		if (!nextRange) return;
+
+		return end + 1 < nextRange[0];
+	});
+
+	if (range) {
 		console.log(
-			(emptyBlockIndex - X_OFFSET) * 4000000 + index,
+			(range[1] + 1) * 4000000 + index,
 		);
 	}
 }
